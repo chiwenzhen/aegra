@@ -10,6 +10,7 @@ from langchain_core.messages import AIMessage
 from langgraph.graph import StateGraph
 from langgraph.prebuilt import ToolNode
 from langgraph.runtime import Runtime
+from langchain.chat_models import init_chat_model
 
 from react_agent.context import Context
 from react_agent.state import InputState, State
@@ -34,8 +35,13 @@ async def call_model(
         dict: A dictionary containing the model's response message.
     """
     # Initialize the model with tool binding. Change the model or add more tools here.
-    model = load_chat_model(runtime.context.model).bind_tools(TOOLS)
-
+    # model = load_chat_model(runtime.context.model).bind_tools(TOOLS)
+    model = init_chat_model(
+        "qwen3-max",
+        model_provider="openai",
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+        api_key="sk-72fb5cc108ef4c52b08c549d25963bff"
+    )
     # Format the system prompt. Customize this to change the agent's behavior.
     system_message = runtime.context.system_prompt.format(
         system_time=datetime.now(tz=UTC).isoformat()
